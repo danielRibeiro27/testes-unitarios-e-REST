@@ -1,0 +1,31 @@
+Ferramentas utilizadas:
+- EF Core
+- Pomelo (provedor para MySql)
+- EF Core Design (code-first)
+- Web API's
+- REST
+
+Etapas:
+- Criação das classes de modelo Produto e Categoria
+- Criação da classe de Contexto, uma classe que herda da DbContext (EF Core), que define os mapeamentos entre as entidades e as tabelas
+	Uma instância da classe de contexto representa uma sessão com o banco de dados
+	Utiliza a classe DbSet que representa uma coleção de entidades no contexto que pode se usada para as operações (plural)
+- Definir string de conexão com o banco no appsettings.json
+- Registrar o serviço do contexto EF
+- Definir relacionamentos por meio de propriedades de navegação (public ICollection<Produto> Produtos, public virtual Categoria)
+- Utilizar os comandos migrations para criar os modelos (dotnet ef migrations add 'name', dotnet migrations remove 'name', dotnet ef database update)
+- Utilizar DataAnnotations para configurar os tipos da entidade que serão mapeados para o banco de dados (existe uma forma que não polui o modelo chamada FluentAPI)
+- Popular as tabelas, opções:
+	1. incluir manualmente usando insert
+	2. usar o método OnModelCreating do contexto usando as propriedades HasData do EF Core
+	3. criar um método estático com o código usando AddRange do EFCore
+	4. criar uma migração vazia, e usar os métodos up e down definindo neles as intruções de INSERT
+- Adicionar os controladores na classe Program
+- Criar o controlador e usar o estilo REST:	
+	1. usar os verbos HTTP
+	2. usar os códigos de status HTTP
+- Serialização e Deserialização -> referência cíclica: ocorre quando existe um loop ao obter um elemento utilizando Include para trazer uma propriedade de navegação. Para correção usar IgnoreCycles.
+- Serialização e Deserialização -> por padrão, todas propriedades publicas são serializadas, o que pode não ser desejado em propriedades de navegação (ex.: public Categoria categoria). Para correção usar atributo JsonIgnore
+- Otimizando Códigos -> quando consultamos entidades ele armazena as entidades no cache, realizando o tracking para acompanhar o estado. Para correção usar AsNoTracking().
+- Otimizando Códigos -> nunca retornar todos os registros em uma consulta. Para correção usar Take(10).
+- Otimizando Códigos -> nunca retornar objetos relacionados (propriedades de navegação) sem usar um filtro. 
